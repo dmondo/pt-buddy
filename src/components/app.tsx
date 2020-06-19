@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Form from './form';
 import Login from './login';
 import History from './history';
-import Calendar from './calendar';
+import Scheduler from './scheduler';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
   calendar: {
-    marginTop: '40px',
+    marginTop: '20px',
   },
 }));
 
@@ -29,7 +29,7 @@ const App = (): JSX.Element => {
         </Typography>
         <Form />
         <div className={classes.calendar}>
-          <Calendar />
+          <Scheduler />
         </div>
       </Grid>
       <Grid container item xs={6} direction="column">
