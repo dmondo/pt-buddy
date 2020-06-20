@@ -26,7 +26,7 @@ const ScheduledReminders = ({ scheduled }: { scheduled: IScheduled }): JSX.Eleme
     <>
       <Typography variant="body2" component="p">
         {bull}
-        {`${scheduled.tag} - ${scheduled.patients.join(', ')} - ${scheduled.day} - ${scheduled.time}`}
+        {`${scheduled.tag} - ${scheduled.patients} - ${scheduled.day} - ${scheduled.time}`}
       </Typography>
     </>
   );
