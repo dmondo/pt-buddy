@@ -6,6 +6,22 @@ interface IState {
   scheduling: boolean;
   patients: IPatient[];
   reminders: IReminder[];
+  scheduledReminders: IScheduled[];
+  pickingDate: boolean;
+  addReminder: string;
+  addPatients: string[];
+  selectedPatient: string;
+  addDate: string;
+  addTime: string;
+  addAM: string;
+}
+
+interface IScheduled {
+  uuid: string;
+  day: string;
+  patients: string[];
+  time: string;
+  tag: string;
 }
 
 interface IReminder {
