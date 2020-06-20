@@ -21,6 +21,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// TODO display selectedDates dates below calendar when using date picker
+
 const CalendarWidget = (): JSX.Element => {
   const classes = useStyles();
   const { state, dispatch } = React.useContext(store);
@@ -43,12 +45,11 @@ const CalendarWidget = (): JSX.Element => {
 
   const addScheduled = (): void => {
     const { scheduledReminders } = state;
-    // TODO: generate from current value of state variables below
-    // before resetting them via dispatch
+
     const newScheduled: IScheduled = {
       uuid: uuidv4(),
-      day: addDate,
-      patients: addPatients,
+      day: selectedDates.length ? selectedDates : addDate,
+      patients: selectedPatient,
       time: `${addTime}${addAM}`,
       tag: addReminder,
     };
@@ -58,7 +59,7 @@ const CalendarWidget = (): JSX.Element => {
     dispatch({ type: 'ADDREMINDER', payload: '' });
     dispatch({ type: 'ADDPATIENTS', payload: [] });
     dispatch({ type: 'SELECTPATIENT', payload: '' });
-    dispatch({ type: 'ADDDATE', payload: '' });
+    dispatch({ type: 'ADDDATE', payload: 'daily' });
     dispatch({ type: 'ADDTIME', payload: '' });
     dispatch({ type: 'ADDAM', payload: '' });
   };
@@ -76,7 +77,6 @@ const CalendarWidget = (): JSX.Element => {
 
   const updateDate = (date: Date) => {
     const newDates = [...selectedDates, date];
-    dispatch({ type: 'ADDDATE', payload: date });
     dispatch({ type: 'ADDDATES', payload: newDates });
   };
 
