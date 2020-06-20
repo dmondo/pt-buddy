@@ -11,7 +11,8 @@ interface IState {
   addReminder: string;
   addPatients: string[];
   selectedPatient: string;
-  addDate: string;
+  addDate: (string|Date);
+  selectedDates: Date[];
   addTime: string;
   addAM: string;
 }
