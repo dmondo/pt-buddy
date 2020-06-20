@@ -32,6 +32,7 @@ const CalendarWidget = (): JSX.Element => {
     addPatients,
     selectedPatient,
     addDate,
+    selectedDates,
     addTime,
     addAM,
   } = state;
@@ -42,19 +43,24 @@ const CalendarWidget = (): JSX.Element => {
 
   const addScheduled = (): void => {
     const { scheduledReminders } = state;
-    console.log(
-      (document.getElementById('reminder') as HTMLInputElement).value,
-    );
+    // TODO: generate from current value of state variables below
+    // before resetting them via dispatch
     const newScheduled: IScheduled = {
       uuid: uuidv4(),
-      day: 'Monday',
-      patients: ['fred', 'joan'],
-      time: '8am',
-      tag: 'ham',
+      day: addDate,
+      patients: addPatients,
+      time: `${addTime}${addAM}`,
+      tag: addReminder,
     };
 
     const updatedScheduled = [...scheduledReminders, newScheduled];
     dispatch({ type: 'SCHEDULED', payload: updatedScheduled });
+    dispatch({ type: 'ADDREMINDER', payload: '' });
+    dispatch({ type: 'ADDPATIENTS', payload: [] });
+    dispatch({ type: 'SELECTPATIENT', payload: '' });
+    dispatch({ type: 'ADDDATE', payload: '' });
+    dispatch({ type: 'ADDTIME', payload: '' });
+    dispatch({ type: 'ADDAM', payload: '' });
   };
 
   // TODO: types for events
@@ -66,6 +72,12 @@ const CalendarWidget = (): JSX.Element => {
     const newPatients = [...addPatients, e.target.value];
     dispatch({ type: 'ADDPATIENTS', payload: newPatients });
     dispatch({ type: 'SELECTPATIENT', payload: e.target.value });
+  };
+
+  const updateDate = (date: Date) => {
+    const newDates = [...selectedDates, date];
+    dispatch({ type: 'ADDDATE', payload: date });
+    dispatch({ type: 'ADDDATES', payload: newDates });
   };
 
   const updateTime = (e): void => {
@@ -179,7 +191,7 @@ const CalendarWidget = (): JSX.Element => {
             </FormControl>
           </Grid>
         </Grid>
-        {pickingDate && <Calendar />}
+        {pickingDate && <Calendar onChange={updateDate} />}
       </Grid>
       <Grid item>
         <Button
