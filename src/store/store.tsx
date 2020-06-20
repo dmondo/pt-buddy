@@ -12,9 +12,10 @@ const initialState = {
   scheduledReminders: [],
   pickingDate: false,
   addReminder: '',
-  addPatients: [''],
+  addPatients: [],
   selectedPatient: '',
-  addDate: '',
+  addDate: 'daily',
+  selectedDates: [],
   addTime: '',
   addAM: '',
 };
@@ -49,6 +50,8 @@ const reducer = (state: IState, action: IAction): IState => {
       return { ...state, selectedPatient: action.payload };
     case 'ADDDATE':
       return { ...state, addDate: action.payload };
+    case 'ADDDATES':
+      return { ...state, selectedDates: action.payload };
     case 'ADDTIME':
       return { ...state, addTime: action.payload };
     case 'ADDAM':
