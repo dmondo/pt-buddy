@@ -41,3 +41,22 @@ interface IAction {
   type: string;
   payload: any;
 }
+
+interface IServerReminder {
+  _id?: string;
+  uuid: string;
+  ptuuid: string;
+  tag: string;
+  text: string;
+  date: Date;
+  patient: string;
+  patientNumber: string;
+}
+
+interface IReminderCallback {
+  (err: Error, data?: IServerReminder[]): void;
+}
+
+interface errorCB {
+  (err: Error): void
+}
