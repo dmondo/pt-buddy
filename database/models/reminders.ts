@@ -9,8 +9,7 @@ const reminderSchema = new mongoose.Schema({
   ptuuid: String,
   tag: String,
   text: String,
-  time: String,
-  date: String,
+  date: Date,
   patientNumber: { type: String, validate: validPhone },
 });
 

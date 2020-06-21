@@ -48,8 +48,7 @@ interface IServerReminder {
   ptuuid: string;
   tag: string;
   text: string;
-  time: string;
-  date: string;
+  date: Date;
   patient: string;
   patientNumber: string;
 }
