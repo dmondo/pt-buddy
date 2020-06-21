@@ -26,7 +26,6 @@ const saveReminder = async (reminder: IServerReminder, callback: errorCB): Promi
       ptuuid,
       tag,
       text,
-      time,
       date,
       patientNumber,
     } = reminder;
@@ -35,7 +34,6 @@ const saveReminder = async (reminder: IServerReminder, callback: errorCB): Promi
       ptuuid,
       tag,
       text,
-      time,
       date,
       patientNumber,
     });
@@ -52,6 +50,15 @@ const findReminder = async (uuid: string, callback: IReminderCallback): Promise<
     callback(null, reminder.map((doc: mongoose.Document) => doc.toObject()));
   } catch (err) {
     callback(err);
+  }
+};
+
+const findRemindersSchedule = async (): Promise<IServerReminder[]> => {
+  try {
+    const reminders = await Reminder.find({});
+    return reminders.map((doc: mongoose.Document) => doc.toObject());
+  } catch (err) {
+    return err;
   }
 };
 
@@ -73,9 +80,15 @@ const removeReminder = async (uuid: string, callback: errorCB): Promise<void> =>
   }
 };
 
+const removeReminderSchedule = async (uuid: string): Promise<void> => {
+  await Reminder.findOneAndDelete({ uuid });
+};
+
 export {
   saveReminder,
   findReminder,
+  findRemindersSchedule,
   findReminderByUser,
   removeReminder,
+  removeReminderSchedule,
 };
