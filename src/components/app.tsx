@@ -21,6 +21,34 @@ const useStyles = makeStyles((theme) => ({
 
 const App = (): JSX.Element => {
   const classes = useStyles();
+
+  // TODO delete later, this is a test
+  React.useEffect(() => {
+    (async () => {
+      const now = new Date();
+      now.setHours(21, 48, 0);
+      const data = {
+        uuid: '123',
+        ptuuid: '555',
+        tag: 'ham',
+        text: 'hamster',
+        date: now,
+        patient: 'fred',
+        patientNumber: '+17149553824',
+      };
+
+      const url = '/reminders';
+
+      const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      };
+
+      await fetch(url, options);
+    })();
+  }, []);
+
   return (
     <Grid container className={classes.root} spacing={2}>
       <Grid item xs={6}>
