@@ -18,4 +18,4 @@ app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
 
-setInterval(scheduler);
+setInterval(scheduler, 60000);
