@@ -1,10 +1,21 @@
 import sms from './sms';
+import { removeReminderSchedule, findRemindersSchedule } from '../../database/index';
 
-const scheduler = (): void => {
-  // grab all reminders from the database
-  // grab current time, e.g. with new Date
-  // for each reminder, check if its time is >= Date time
-  // if it is, call sms with that message, remove that reminder from the database
+const scheduler = async (): Promise<void> => {
+  const reminders = await findRemindersSchedule();
+  reminders.forEach(async (reminder: IServerReminder) => {
+    const {
+      uuid,
+      text,
+      date,
+      patientNumber,
+    } = reminder;
+    const currentTime = new Date();
+    if (currentTime.getTime() >= date.getTime()) {
+      await sms(patientNumber, text);
+      await removeReminderSchedule(uuid);
+    }
+  });
 };
 
 export default scheduler;
