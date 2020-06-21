@@ -28,6 +28,7 @@
     "react-time-picker": "^4.0.1",
     "ts-loader": "^7.0.5",
     "ts-node": "^8.10.2",
+    "twilio": "^3.46.0",
     "uuid": "^8.1.0"
   },
   "devDependencies": {
