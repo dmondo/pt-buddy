@@ -71,8 +71,9 @@ const findReminderByUser = async (ptuuid: string, callback: IReminderCallback): 
   }
 };
 
-const removeReminder = async (uuid: string, callback: errorCB): Promise<void> => {
+const removeReminder = async (data: IUUID, callback: errorCB): Promise<void> => {
   try {
+    const { uuid } = data;
     await Reminder.findOneAndDelete({ uuid });
     callback(null);
   } catch (err) {
