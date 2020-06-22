@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import Reminder from './models/reminders';
+import User from './models/users';
 
 dotenv.config();
 
@@ -75,12 +77,22 @@ const findRemindersSchedule = async (): Promise<IServerReminder[]> => {
   }
 };
 
-const findReminderByUser = async (ptuuid: string, callback: IReminderCallback): Promise<void> => {
+// const findReminderByUser =
+// async (ptuuid: string, callback: IReminderCallback): Promise<void> => {
+//   try {
+//     const reminder = await Reminder.find({ ptuuid });
+//     callback(null, reminder.map((doc: mongoose.Document) => doc.toObject()));
+//   } catch (err) {
+//     callback(err);
+//   }
+// };
+
+const findReminderByUser = async (ptuuid: string): Promise<IServerReminder[] | Error> => {
   try {
     const reminder = await Reminder.find({ ptuuid });
-    callback(null, reminder.map((doc: mongoose.Document) => doc.toObject()));
+    return reminder.map((doc: mongoose.Document) => doc.toObject());
   } catch (err) {
-    callback(err);
+    return err;
   }
 };
 
@@ -102,6 +114,56 @@ const completeReminder = async (jobid: string): Promise<void> => {
   await Reminder.findOneAndUpdate({ jobid }, { completed: true });
 };
 
+const saveUser = async (data: IUser, callback: ISaveUser): Promise<void> => {
+  const { username, email, password } = data;
+  try {
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      callback(null, 'exists');
+      return;
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = bcrypt.hash(password, salt);
+
+    const user = new User({ username, email, password: hash });
+    await user.save();
+    callback(null, 'newUser');
+  } catch (err) {
+    callback(err);
+  }
+};
+
+const findUser = async (data: IVerify, callback: IFindUser): Promise<void> => {
+  try {
+    const { email, password } = data;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      callback(null, null, 'badUser');
+      return;
+    }
+
+    const userObj = user.toObject();
+
+    const compare = await bcrypt.compare(password, userObj.password);
+    if (!compare) {
+      callback(null, null, 'badUser');
+    } else {
+      const returnData = {
+        username: userObj.username,
+        email: userObj.email,
+        ptuuid: userObj.ptuuid,
+        registerDate: userObj.registerDate,
+      };
+      callback(null, returnData, 'user');
+    }
+  } catch (err) {
+    callback(err);
+  }
+};
+
 export {
   saveReminder,
   findReminder,
@@ -110,4 +172,6 @@ export {
   removeReminder,
   removeReminderSchedule,
   completeReminder,
+  saveUser,
+  findUser,
 };
