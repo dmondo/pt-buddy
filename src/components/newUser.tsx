@@ -1,4 +1,5 @@
 import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
@@ -24,6 +25,7 @@ const NewUser = (): JSX.Element => {
       username: (document.getElementById('username') as HTMLInputElement).value,
       email: (document.getElementById('email') as HTMLInputElement).value,
       password: (document.getElementById('password') as HTMLInputElement).value,
+      ptuuid: uuidv4(),
     };
 
     const url = '/users';
@@ -37,9 +39,11 @@ const NewUser = (): JSX.Element => {
     const postUser = await fetch(url, options);
 
     if (postUser.status === 200) {
-      const userData = await postUser.json();
-
       // TODO get saved patients/reminders for user
+
+      // TODO on login, make post req with current reminders to db
+      // ie send post with scheduledReminders
+      // may need to update the scheduledReminders obj w/ more fields
 
       dispatch({ type: 'USER', payload: data.username });
       dispatch({ type: 'LOGIN', payload: true });
