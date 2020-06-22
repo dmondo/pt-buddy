@@ -6,6 +6,7 @@ import Form from './form';
 import Login from './login';
 import History from './history';
 import Scheduler from './scheduler';
+import { store } from '../store/store';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,37 +22,8 @@ const useStyles = makeStyles((theme) => ({
 
 const App = (): JSX.Element => {
   const classes = useStyles();
-
-  // TODO delete later, this is a test
-  // React.useEffect(() => {
-  //   (async () => {
-  //     const now = new Date();
-  //     now.setHours(20, 54, 0);
-  //     const data = {
-  //       uuid: '123',
-  //       ptuuid: '555',
-  //       tag: 'ham',
-  //       text: 'hamster',
-  //       date: now,
-  //       time: '07:40',
-  //       ampm: 'pm',
-  //       daily: false,
-  //       patientName: 'fred',
-  //       patientNumber: '+17149553824',
-  //       completed: false,
-  //     };
-
-  //     const url = '/reminders';
-
-  //     const options = {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(data),
-  //     };
-
-  //     await fetch(url, options);
-  //   })();
-  // }, []);
+  const { state } = React.useContext(store);
+  const { user } = state;
 
   return (
     <Grid container className={classes.root} spacing={2}>
@@ -66,7 +38,11 @@ const App = (): JSX.Element => {
       </Grid>
       <Grid container item xs={6} direction="column">
         <Grid item>
-          <Login />
+          {
+            (user === '')
+              ? <Login />
+              : `Welcome, ${user}`
+          }
         </Grid>
         <Grid>
           <History />
