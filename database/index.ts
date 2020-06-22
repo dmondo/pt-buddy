@@ -17,6 +17,7 @@ mongoose.connect(cnx, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 });
 
 const saveReminder = async (reminder: IServerReminder, callback: errorCB): Promise<void> => {
@@ -24,18 +25,30 @@ const saveReminder = async (reminder: IServerReminder, callback: errorCB): Promi
     const {
       uuid,
       ptuuid,
+      jobid,
       tag,
       text,
       date,
+      time,
+      ampm,
+      daily,
+      patientName,
       patientNumber,
+      completed,
     } = reminder;
     const reminderDoc = new Reminder({
       uuid,
       ptuuid,
+      jobid,
       tag,
       text,
       date,
+      time,
+      ampm,
+      daily,
+      patientName,
       patientNumber,
+      completed,
     });
     await reminderDoc.save();
     callback(null);
@@ -82,7 +95,11 @@ const removeReminder = async (data: IUUID, callback: errorCB): Promise<void> => 
 };
 
 const removeReminderSchedule = async (uuid: string): Promise<void> => {
-  await Reminder.findOneAndDelete({ uuid });
+  await Reminder.deleteMany({ uuid });
+};
+
+const completeReminder = async (jobid: string): Promise<void> => {
+  await Reminder.findOneAndUpdate({ jobid }, { completed: true });
 };
 
 export {
@@ -92,4 +109,5 @@ export {
   findReminderByUser,
   removeReminder,
   removeReminderSchedule,
+  completeReminder,
 };

@@ -9,17 +9,30 @@ interface IState {
   scheduledReminders: IScheduled[];
   pickingDate: boolean;
   addReminder: string;
+  addText: string;
+  tagToText: ITagToText;
+  patientToNumber: IPatientToNumber;
   addPatients: string[];
   selectedPatient: string;
   addDate: (string|Date);
   selectedDates: Date[];
   parsedDates: string[];
   addTime: string;
+  addMinute: string;
   addAM: string;
   patientError: boolean;
   nameError: boolean;
   tagError: boolean;
   reminderError: boolean;
+  minuteError: boolean;
+}
+
+interface ITagToText {
+  [key: string]: string;
+}
+
+interface IPatientToNumber {
+  [key: string]: string;
 }
 
 interface IScheduled {
@@ -51,11 +64,17 @@ interface IServerReminder {
   _id?: string;
   uuid: string;
   ptuuid: string;
+  jobid: string;
   tag: string;
   text: string;
   date: Date;
-  patient: string;
+  time?: string;
+  ampm?: string;
+  daily: boolean;
+  patient?: string;
+  patientName: string;
   patientNumber: string;
+  completed: boolean;
 }
 
 interface IReminderCallback {

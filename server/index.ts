@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import parser from 'body-parser';
 import path from 'path';
 import router from './router';
-import scheduler from './sms/scheduler';
+import { startScheduler } from './sms/scheduler';
 
 const app = express();
 
@@ -15,7 +15,6 @@ app.use(router);
 const port = process.env.PORT || 1444;
 
 app.listen(port, () => {
+  startScheduler();
   console.log(`listening on port ${port}`);
 });
-
-// setInterval(scheduler, 60000);

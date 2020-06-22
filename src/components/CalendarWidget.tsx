@@ -1,6 +1,7 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -37,8 +38,6 @@ const months = {
   11: 'December',
 };
 
-// TODO display selectedDates dates below calendar when using date picker
-
 const CalendarWidget = (): JSX.Element => {
   const classes = useStyles();
   const { state, dispatch } = React.useContext(store);
@@ -53,33 +52,120 @@ const CalendarWidget = (): JSX.Element => {
     selectedDates,
     parsedDates,
     addTime,
+    addMinute,
     addAM,
   } = state;
+
+  const updateMinute = (): void => {
+    const minutes = (document.getElementById('minutes') as HTMLInputElement).value;
+    dispatch({ type: 'ADDMINUTE', payload: minutes });
+  };
+
+  const minuteErrorHandler = (): boolean => {
+    const minutes = (document.getElementById('minutes') as HTMLInputElement).value;
+    let valid = true;
+    if (Number.isNaN(Number(minutes))) {
+      valid = false;
+    } else if (Number(minutes) < 0 || Number(minutes) > 59) {
+      valid = false;
+    }
+    dispatch({ type: 'MINUTEERROR', payload: !valid });
+    return valid;
+  };
 
   const handleDate = (): void => {
     dispatch({ type: 'DATE', payload: !pickingDate });
   };
 
-  const addScheduled = (): void => {
+  const addScheduled = async (): Promise<void> => {
     if (
       selectedPatient === ''
       || addTime === ''
       || addReminder === ''
+      || !minuteErrorHandler()
     ) {
       return;
     }
 
-    const { scheduledReminders } = state;
+    const { scheduledReminders, tagToText, patientToNumber } = state;
 
     const defaultAM = (addAM === '') ? 'am' : addAM;
 
+    const newUUID = uuidv4();
+
     const newScheduled: IScheduled = {
-      uuid: uuidv4(),
+      uuid: newUUID,
       day: selectedDates.length ? parsedDates : addDate,
       patients: selectedPatient,
-      time: `${addTime}${defaultAM}`,
+      time: `${addTime}:${addMinute.padStart(2, '0')}${defaultAM}`,
       tag: addReminder,
     };
+
+    if (selectedDates.length === 0) {
+      addPatients.forEach(async (patient: string) => {
+        const now = new Date();
+        const adjustTime = (addAM === 'am') ? addTime : addTime + 12;
+        now.setHours(Number(adjustTime), Number(addMinute), 0);
+
+        const USNumber = `+1${patientToNumber[patient]}`;
+
+        const serverReminder = {
+          uuid: newUUID,
+          ptuuid: 'placeholder',
+          jobid: uuidv4(),
+          tag: addReminder,
+          text: tagToText[addReminder],
+          date: now,
+          daily: true,
+          patientName: patient,
+          patientNumber: USNumber,
+          completed: false,
+        };
+
+        const url = '/reminders';
+
+        const options = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(serverReminder),
+        };
+
+        await fetch(url, options);
+      });
+    } else {
+      selectedDates.forEach(async (day: Date) => {
+        addPatients.forEach(async (patient: string) => {
+          const then = day;
+          const adjustTime = (addAM === 'am') ? addTime : addTime + 12;
+          then.setHours(Number(adjustTime), Number(addMinute), 0);
+
+          const USNumber = `+1${patientToNumber[patient]}`;
+
+          const serverReminder = {
+            uuid: newUUID,
+            ptuuid: 'placeholder',
+            jobid: uuidv4(),
+            tag: addReminder,
+            text: tagToText[addReminder],
+            date: then,
+            daily: false,
+            patientName: patient,
+            patientNumber: USNumber,
+            completed: false,
+          };
+
+          const url = '/reminders';
+
+          const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(serverReminder),
+          };
+
+          await fetch(url, options);
+        });
+      });
+    }
 
     const updatedScheduled = [...scheduledReminders, newScheduled];
     dispatch({ type: 'SCHEDULED', payload: updatedScheduled });
@@ -118,6 +204,8 @@ const CalendarWidget = (): JSX.Element => {
   const updateAM = (e): void => {
     dispatch({ type: 'ADDAM', payload: e.target.value });
   };
+
+  const { minuteError } = state;
 
   return (
     <>
@@ -220,6 +308,17 @@ const CalendarWidget = (): JSX.Element => {
                 <MenuItem value="pm">pm</MenuItem>
               </Select>
             </FormControl>
+          </Grid>
+          <Grid item>
+            <TextField
+              label="minutes"
+              id="minutes"
+              color="secondary"
+              defaultValue="0"
+              onChange={updateMinute}
+              error={minuteError}
+              helperText={minuteError ? 'invalid time' : ''}
+            />
           </Grid>
         </Grid>
         {pickingDate && <Calendar onChange={updateDate} />}
