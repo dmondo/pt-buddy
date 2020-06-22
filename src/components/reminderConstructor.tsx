@@ -33,6 +33,7 @@ const ReminderConstructor = (): JSX.Element => {
     pickingDate,
     parsedDates,
     addTime,
+    addMinute,
     addAM,
   } = state;
 
@@ -42,6 +43,7 @@ const ReminderConstructor = (): JSX.Element => {
     dispatch({ type: 'ADDDATE', payload: 'daily' });
     dispatch({ type: 'ADDDATES', payload: [] });
     dispatch({ type: 'ADDTIME', payload: '' });
+    dispatch({ type: 'ADDMINUTE', payload: '' });
     dispatch({ type: 'ADDAM', payload: '' });
   };
 
@@ -52,7 +54,7 @@ const ReminderConstructor = (): JSX.Element => {
           <Typography variant="h6" component="h2">
             {`new reminder: ${addReminder} - ${selectedPatient} `}
             {!pickingDate ? 'daily ' : parsedDates.join(', ')}
-            {` ${addTime}${addAM}`}
+            {` ${addTime}:${addMinute.padStart(2, '0')}${addAM}`}
           </Typography>
           <CardActions>
             <Button
