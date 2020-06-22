@@ -40,14 +40,19 @@ const Form = (): JSX.Element => {
 
   const newReminder = (): void => {
     if (!reminderErrorHandle() || !tagErrorHandle()) { return; }
-    const { reminders } = state;
+    const { reminders, tagToText } = state;
+    const tag = (document.getElementById('tag') as HTMLInputElement).value;
+    const text = (document.getElementById('reminder') as HTMLInputElement).value;
     const reminder = {
-      tag: (document.getElementById('tag') as HTMLInputElement).value,
-      text: (document.getElementById('reminder') as HTMLInputElement).value,
+      tag,
+      text,
       uuid: uuidv4(),
     };
     const newReminders = [...reminders, reminder];
+    const newTagToText = { ...tagToText };
+    newTagToText[tag] = text;
     dispatch({ type: 'REMINDERS', payload: newReminders });
+    dispatch({ type: 'ADDTAGTEXT', payload: newTagToText });
   };
 
   const phoneErrorHandle = (): boolean => {
@@ -75,13 +80,18 @@ const Form = (): JSX.Element => {
   const newPatient = (): void => {
     if (!nameErrorHandle() || !phoneErrorHandle()) { return; }
 
-    const { patients } = state;
+    const { patients, patientToNumber } = state;
+    const name = (document.getElementById('patientName') as HTMLInputElement).value;
+    const phone = (document.getElementById('patientNumber') as HTMLInputElement).value;
+
     const patient = {
-      name: (document.getElementById('patientName') as HTMLInputElement).value,
-      phone: (document.getElementById('patientNumber') as HTMLInputElement).value,
+      name,
+      phone,
       uuid: uuidv4(),
     };
+    patientToNumber[name] = phone;
     const newPatients = [...patients, patient];
+    dispatch({ type: 'PATIENTTONUMBER', payload: patientToNumber });
     dispatch({ type: 'PATIENTS', payload: newPatients });
   };
 
