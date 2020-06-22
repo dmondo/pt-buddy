@@ -1,5 +1,6 @@
 interface IState {
   user: string;
+  ptuuidUser: string;
   loginStatus: boolean;
   failedLogin: boolean;
   newUser: boolean;
@@ -25,6 +26,9 @@ interface IState {
   tagError: boolean;
   reminderError: boolean;
   minuteError: boolean;
+  noAccount: boolean;
+  failedReminderSend: boolean;
+  serverReminders: IServerReminder[];
 }
 
 interface ITagToText {
