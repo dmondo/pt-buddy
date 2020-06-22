@@ -88,3 +88,29 @@ interface errorCB {
 interface IUUID {
   uuid: string;
 }
+
+interface IUser {
+  username: string;
+  email: string;
+  password: string;
+}
+
+interface ISaveUser {
+  (err: Error, type?: string): void;
+}
+
+interface IVerify {
+  email: string;
+  password: string;
+}
+
+interface IDBUser {
+  username: string;
+  email: string;
+  ptuuid: string;
+  registerDate: Date;
+}
+
+interface IFindUser {
+  (err: Error, data?: IDBUser, type?: string): void;
+}
