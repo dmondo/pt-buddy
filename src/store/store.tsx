@@ -11,6 +11,8 @@ const initialState = {
   scheduledReminders: [],
   pickingDate: false,
   addReminder: '',
+  addText: '',
+  tagToText: {},
   addPatients: [],
   selectedPatient: '',
   addDate: 'daily',
@@ -22,6 +24,7 @@ const initialState = {
   nameError: false,
   tagError: false,
   reminderError: false,
+  patientToNumber: {},
 };
 
 export const store = React.createContext<IState | any>(initialState);
@@ -48,6 +51,10 @@ const reducer = (state: IState, action: IAction): IState => {
       return { ...state, pickingDate: action.payload };
     case 'ADDREMINDER':
       return { ...state, addReminder: action.payload };
+    case 'ADDTEXT':
+      return { ...state, addText: action.payload };
+    case 'ADDTAGTEXT':
+      return { ...state, tagToText: action.payload };
     case 'ADDPATIENTS':
       return { ...state, addPatients: action.payload };
     case 'SELECTPATIENT':
@@ -70,6 +77,8 @@ const reducer = (state: IState, action: IAction): IState => {
       return { ...state, tagError: action.payload };
     case 'REMINDERERROR':
       return { ...state, reminderError: action.payload };
+    case 'PATIENTTONUMBER':
+      return { ...state, patientToNumber: action.payload };
     default:
       return state;
   }
