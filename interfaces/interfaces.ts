@@ -18,11 +18,13 @@ interface IState {
   selectedDates: Date[];
   parsedDates: string[];
   addTime: string;
+  addMinute: string;
   addAM: string;
   patientError: boolean;
   nameError: boolean;
   tagError: boolean;
   reminderError: boolean;
+  minuteError: boolean;
 }
 
 interface ITagToText {
