@@ -38,7 +38,7 @@ const getUser = async (req: Request, res: Response): Promise<void> => {
       if (reminders) {
         res.json({ ...data, reminders });
       } else {
-        res.json(data);
+        res.json({ ...data, reminders: [] });
       }
     }
   });
