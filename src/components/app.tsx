@@ -26,15 +26,19 @@ const App = (): JSX.Element => {
   React.useEffect(() => {
     (async () => {
       const now = new Date();
-      now.setHours(21, 48, 0);
+      now.setHours(20, 54, 0);
       const data = {
         uuid: '123',
         ptuuid: '555',
         tag: 'ham',
         text: 'hamster',
         date: now,
-        patient: 'fred',
+        time: '07:40',
+        ampm: 'pm',
+        daily: false,
+        patientName: 'fred',
         patientNumber: '+17149553824',
+        completed: false,
       };
 
       const url = '/reminders';
