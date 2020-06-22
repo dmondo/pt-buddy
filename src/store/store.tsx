@@ -15,8 +15,13 @@ const initialState = {
   selectedPatient: '',
   addDate: 'daily',
   selectedDates: [],
+  parsedDates: [],
   addTime: '',
   addAM: '',
+  patientError: false,
+  nameError: false,
+  tagError: false,
+  reminderError: false,
 };
 
 export const store = React.createContext<IState | any>(initialState);
@@ -51,10 +56,20 @@ const reducer = (state: IState, action: IAction): IState => {
       return { ...state, addDate: action.payload };
     case 'ADDDATES':
       return { ...state, selectedDates: action.payload };
+    case 'PARSEDATES':
+      return { ...state, parsedDates: action.payload };
     case 'ADDTIME':
       return { ...state, addTime: action.payload };
     case 'ADDAM':
       return { ...state, addAM: action.payload };
+    case 'PATIENTERROR':
+      return { ...state, patientError: action.payload };
+    case 'NAMEERROR':
+      return { ...state, nameError: action.payload };
+    case 'TAGERROR':
+      return { ...state, tagError: action.payload };
+    case 'REMINDERERROR':
+      return { ...state, reminderError: action.payload };
     default:
       return state;
   }
