@@ -60,7 +60,7 @@ const CalendarWidget = (): JSX.Element => {
     dispatch({ type: 'DATE', payload: !pickingDate });
   };
 
-  const addScheduled = (): void => {
+  const addScheduled = async (): Promise<void> => {
     if (
       selectedPatient === ''
       || addTime === ''
@@ -69,17 +69,76 @@ const CalendarWidget = (): JSX.Element => {
       return;
     }
 
-    const { scheduledReminders } = state;
+    const { scheduledReminders, tagToText, patientToNumber } = state;
 
     const defaultAM = (addAM === '') ? 'am' : addAM;
 
+    const newUUID = uuidv4();
+
     const newScheduled: IScheduled = {
-      uuid: uuidv4(),
+      uuid: newUUID,
       day: selectedDates.length ? parsedDates : addDate,
       patients: selectedPatient,
       time: `${addTime}${defaultAM}`,
       tag: addReminder,
     };
+
+    if (selectedDates.length === 0) {
+      // deal with daily
+      addPatients.forEach(async (patient: string) => {
+        const now = new Date();
+        now.setHours(Number(addTime));
+        const serverReminder = {
+          uuid: newUUID,
+          ptuuid: 'placeholder',
+          jobid: uuidv4(),
+          tag: addReminder,
+          text: tagToText[addReminder],
+          date: now,
+          daily: true,
+          patientName: patient,
+          patientNumber: patientToNumber[patient],
+          completed: false,
+        };
+
+        const url = '/reminders';
+
+        const options = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(serverReminder),
+        };
+
+        await fetch(url, options);
+      });
+    } else {
+      selectedDates.forEach(async (day: Date) => {
+        addPatients.forEach(async (patient: string) => {
+          const serverReminder = {
+            uuid: newUUID,
+            ptuuid: 'placeholder',
+            jobid: uuidv4(),
+            tag: addReminder,
+            text: tagToText[addReminder],
+            date: day,
+            daily: false,
+            patientName: patient,
+            patientNumber: patientToNumber[patient],
+            completed: false,
+          };
+
+          const url = '/reminders';
+
+          const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(serverReminder),
+          };
+
+          await fetch(url, options);
+        });
+      });
+    }
 
     const updatedScheduled = [...scheduledReminders, newScheduled];
     dispatch({ type: 'SCHEDULED', payload: updatedScheduled });
