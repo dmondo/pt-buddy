@@ -115,7 +115,12 @@ const completeReminder = async (jobid: string): Promise<void> => {
 };
 
 const saveUser = async (data: IUser, callback: ISaveUser): Promise<void> => {
-  const { username, email, password } = data;
+  const {
+    username,
+    email,
+    password,
+    ptuuid,
+  } = data;
   try {
     const userExists = await User.findOne({ email });
 
@@ -125,9 +130,14 @@ const saveUser = async (data: IUser, callback: ISaveUser): Promise<void> => {
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hash = bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(password, salt);
 
-    const user = new User({ username, email, password: hash });
+    const user = new User({
+      username,
+      email,
+      password: hash,
+      ptuuid,
+    });
     await user.save();
     callback(null, 'newUser');
   } catch (err) {
