@@ -21,9 +21,25 @@ const useStyles = makeStyles((theme) => ({
 const Form = (): JSX.Element => {
   const classes = useStyles();
   const { state, dispatch } = React.useContext(store);
-  // TODO: validate input to make sure not empty
-  // TODO: allow deleting reminders/patients
+
+  const reminderErrorHandle = (): boolean => {
+    const text = (document.getElementById('reminder') as HTMLInputElement).value;
+    let valid = true;
+    if (text.length < 1) { valid = false; }
+    dispatch({ type: 'REMINDERERROR', payload: !valid });
+    return valid;
+  };
+
+  const tagErrorHandle = (): boolean => {
+    const tag = (document.getElementById('tag') as HTMLInputElement).value;
+    let valid = true;
+    if (tag.length < 1) { valid = false; }
+    dispatch({ type: 'TAGERROR', payload: !valid });
+    return valid;
+  };
+
   const newReminder = (): void => {
+    if (!reminderErrorHandle() || !tagErrorHandle()) { return; }
     const { reminders } = state;
     const reminder = {
       tag: (document.getElementById('tag') as HTMLInputElement).value,
@@ -34,7 +50,31 @@ const Form = (): JSX.Element => {
     dispatch({ type: 'REMINDERS', payload: newReminders });
   };
 
+  const phoneErrorHandle = (): boolean => {
+    const phone = (document.getElementById('patientNumber') as HTMLInputElement).value;
+    let valid = true;
+    for (let i = 0; i < phone.length; i += 1) {
+      if (Number.isNaN(Number(phone[i]))) {
+        valid = false;
+        break;
+      }
+    }
+    if (phone.length !== 10) { valid = false; }
+    dispatch({ type: 'PATIENTERROR', payload: !valid });
+    return valid;
+  };
+
+  const nameErrorHandle = (): boolean => {
+    const name = (document.getElementById('patientName') as HTMLInputElement).value;
+    let valid = true;
+    if (name.length < 1) { valid = false; }
+    dispatch({ type: 'NAMEERROR', payload: !valid });
+    return valid;
+  };
+
   const newPatient = (): void => {
+    if (!nameErrorHandle() || !phoneErrorHandle()) { return; }
+
     const { patients } = state;
     const patient = {
       name: (document.getElementById('patientName') as HTMLInputElement).value,
@@ -44,6 +84,13 @@ const Form = (): JSX.Element => {
     const newPatients = [...patients, patient];
     dispatch({ type: 'PATIENTS', payload: newPatients });
   };
+
+  const {
+    patientError,
+    nameError,
+    tagError,
+    reminderError,
+  } = state;
 
   return (
     <Grid container spacing={1} direction="column">
@@ -61,6 +108,8 @@ const Form = (): JSX.Element => {
               label="new reminder"
               id="reminder"
               color="secondary"
+              error={reminderError}
+              helperText={reminderError ? 'invalid reminder' : ''}
             />
           </Grid>
           <Grid item>
@@ -71,6 +120,8 @@ const Form = (): JSX.Element => {
               label="tag"
               id="tag"
               color="secondary"
+              error={tagError}
+              helperText={tagError ? 'invalid tag' : ''}
             />
           </Grid>
           <Grid item>
@@ -98,6 +149,8 @@ const Form = (): JSX.Element => {
               label="new patient name"
               id="patientName"
               color="secondary"
+              error={nameError}
+              helperText={nameError ? 'invalid name' : ''}
             />
           </Grid>
           <Grid item>
@@ -108,6 +161,8 @@ const Form = (): JSX.Element => {
               label="new patient number"
               id="patientNumber"
               color="secondary"
+              error={patientError}
+              helperText={patientError ? 'invalid phone number' : ''}
             />
           </Grid>
           <Grid item>

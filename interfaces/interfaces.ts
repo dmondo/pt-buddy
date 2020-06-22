@@ -13,8 +13,13 @@ interface IState {
   selectedPatient: string;
   addDate: (string|Date);
   selectedDates: Date[];
+  parsedDates: string[];
   addTime: string;
   addAM: string;
+  patientError: boolean;
+  nameError: boolean;
+  tagError: boolean;
+  reminderError: boolean;
 }
 
 interface IScheduled {
@@ -59,4 +64,8 @@ interface IReminderCallback {
 
 interface errorCB {
   (err: Error): void
+}
+
+interface IUUID {
+  uuid: string;
 }
