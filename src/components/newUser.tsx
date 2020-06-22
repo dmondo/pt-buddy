@@ -18,14 +18,15 @@ const useStyles = makeStyles((theme) => ({
 const NewUser = (): JSX.Element => {
   const classes = useStyles();
   const { state, dispatch } = React.useContext(store);
-  const { failedLogin } = state;
+  const { failedLogin, serverReminders } = state;
 
   const createAccount = async (): Promise<void> => {
+    const newPTUUID = uuidv4();
     const data = {
       username: (document.getElementById('username') as HTMLInputElement).value,
       email: (document.getElementById('email') as HTMLInputElement).value,
       password: (document.getElementById('password') as HTMLInputElement).value,
-      ptuuid: uuidv4(),
+      ptuuid: newPTUUID,
     };
 
     const url = '/users';
@@ -39,12 +40,23 @@ const NewUser = (): JSX.Element => {
     const postUser = await fetch(url, options);
 
     if (postUser.status === 200) {
-      // TODO get saved patients/reminders for user
+      if (serverReminders.length) {
+        const reminderUrl = '/reminders';
+        serverReminders.forEach(async (reminder: IServerReminder) => {
+          const updatedReminder = { ...reminder };
+          updatedReminder.ptuuid = newPTUUID;
+          const reminderOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedReminder),
+          };
 
-      // TODO on login, make post req with current reminders to db
-      // ie send post with scheduledReminders
-      // may need to update the scheduledReminders obj w/ more fields
+          await fetch(reminderUrl, reminderOptions);
+        });
+      }
 
+      dispatch({ type: 'NOACCOUNT', payload: false });
+      dispatch({ type: 'PTUUID', payload: newPTUUID });
       dispatch({ type: 'USER', payload: data.username });
       dispatch({ type: 'LOGIN', payload: true });
       dispatch({ type: 'FAILED', payload: false });
