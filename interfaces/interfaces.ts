@@ -93,6 +93,7 @@ interface IUser {
   username: string;
   email: string;
   password: string;
+  ptuuid: string;
 }
 
 interface ISaveUser {
