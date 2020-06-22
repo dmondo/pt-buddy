@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import {
   saveReminder,
-  findReminderByUser,
   removeReminder,
 } from '../../database/index';
 import { scheduleOne, deschedule } from '../sms/scheduler';
@@ -17,15 +16,15 @@ const postReminder = (req: Request, res: Response): void => {
   });
 };
 
-const getReminders = (req: Request, res: Response): void => {
-  findReminderByUser(req.body, (err: Error, data: IServerReminder[]) => {
-    if (err) {
-      res.sendStatus(500);
-    } else {
-      res.json(data);
-    }
-  });
-};
+// const getReminders = (req: Request, res: Response): void => {
+//   findReminderByUser(req.body, (err: Error, data: IServerReminder[]) => {
+//     if (err) {
+//       res.sendStatus(500);
+//     } else {
+//       res.json(data);
+//     }
+//   });
+// };
 
 const deleteReminder = (req: Request, res: Response): void => {
   const { uuid } = req.body;
@@ -39,4 +38,4 @@ const deleteReminder = (req: Request, res: Response): void => {
   });
 };
 
-export { postReminder, getReminders, deleteReminder };
+export { postReminder, deleteReminder };
