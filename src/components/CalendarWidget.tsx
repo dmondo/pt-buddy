@@ -8,6 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { v4 as uuidv4 } from 'uuid';
 import Select from '@material-ui/core/Select';
 import Calendar from 'react-calendar';
+import ReminderConstructor from './reminderConstructor';
 import { store } from '../store/store';
 import '../styles/scheduler.css';
 
@@ -20,6 +21,21 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
 }));
+
+const months = {
+  0: 'January',
+  1: 'February',
+  2: 'March',
+  3: 'April',
+  4: 'May',
+  5: 'June',
+  6: 'July',
+  7: 'August',
+  8: 'September',
+  9: 'October',
+  10: 'November',
+  11: 'December',
+};
 
 // TODO display selectedDates dates below calendar when using date picker
 
@@ -35,6 +51,7 @@ const CalendarWidget = (): JSX.Element => {
     selectedPatient,
     addDate,
     selectedDates,
+    parsedDates,
     addTime,
     addAM,
   } = state;
@@ -44,13 +61,23 @@ const CalendarWidget = (): JSX.Element => {
   };
 
   const addScheduled = (): void => {
+    if (
+      selectedPatient === ''
+      || addTime === ''
+      || addReminder === ''
+    ) {
+      return;
+    }
+
     const { scheduledReminders } = state;
+
+    const defaultAM = (addAM === '') ? 'am' : addAM;
 
     const newScheduled: IScheduled = {
       uuid: uuidv4(),
-      day: selectedDates.length ? selectedDates : addDate,
+      day: selectedDates.length ? parsedDates : addDate,
       patients: selectedPatient,
-      time: `${addTime}${addAM}`,
+      time: `${addTime}${defaultAM}`,
       tag: addReminder,
     };
 
@@ -78,6 +105,10 @@ const CalendarWidget = (): JSX.Element => {
   const updateDate = (date: Date) => {
     const newDates = [...selectedDates, date];
     dispatch({ type: 'ADDDATES', payload: newDates });
+
+    const textDate = `${months[date.getMonth()]} ${date.getDate()}`;
+    const newParsed = [...parsedDates, textDate];
+    dispatch({ type: 'PARSEDATES', payload: newParsed });
   };
 
   const updateTime = (e): void => {
@@ -194,6 +225,7 @@ const CalendarWidget = (): JSX.Element => {
         {pickingDate && <Calendar onChange={updateDate} />}
       </Grid>
       <Grid item>
+        {(addPatients.length > 0 && addReminder.length > 0) && <ReminderConstructor />}
         <Button
           variant="outlined"
           color="secondary"
