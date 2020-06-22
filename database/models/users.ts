@@ -12,7 +12,7 @@ const validMail = (val: string): boolean => (
 );
 
 const validPassword = (val: string): boolean => (
-  val.length > 5
+  val.length >= 5
 );
 
 const userSchema = new mongoose.Schema({
