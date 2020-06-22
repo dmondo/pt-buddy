@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 const App = (): JSX.Element => {
   const classes = useStyles();
   const { state } = React.useContext(store);
-  const { user } = state;
+  const { user, noAccount, failedReminderSend } = state;
 
   return (
     <Grid container className={classes.root} spacing={2}>
@@ -46,6 +46,7 @@ const App = (): JSX.Element => {
         </Grid>
         <Grid>
           <History />
+          { (noAccount && failedReminderSend) && 'login or create an account to send reminders'}
         </Grid>
       </Grid>
     </Grid>
