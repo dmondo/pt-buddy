@@ -8,6 +8,21 @@ import Button from '@material-ui/core/Button';
 import { store } from '../store/store';
 // import '../style/Login.css';
 
+const months = {
+  0: 'January',
+  1: 'February',
+  2: 'March',
+  3: 'April',
+  4: 'May',
+  5: 'June',
+  6: 'July',
+  7: 'August',
+  8: 'September',
+  9: 'October',
+  10: 'November',
+  11: 'December',
+};
+
 const useStyles = makeStyles((theme) => ({
   margin: { margin: theme.spacing(1) },
   input: { color: 'black' },
@@ -24,7 +39,7 @@ const ExistingUser = (): JSX.Element => {
       password: (document.getElementById('password') as HTMLInputElement).value,
     };
 
-    const url = '/auth';
+    const url = '/users';
 
     const options = {
       method: 'POST',
@@ -37,7 +52,39 @@ const ExistingUser = (): JSX.Element => {
     if (result.status === 200) {
       const verifyUser = await result.json();
 
-      dispatch({ type: 'USER', payload: verifyUser.username });
+      const { ptuuid, username, reminders } = verifyUser;
+
+      const displayReminders = reminders.map((reminder: IServerReminder) => {
+        const {
+          uuid,
+          daily,
+          tag,
+          date,
+          patientName,
+        } = reminder;
+        const parsedDay = daily ? 'daily' : months[date.getMonth()];
+        const hr = (date.getHours() > 12) ? date.getHours() % 12 : date.getHours();
+        const ampm = (date.getHours() >= 12) ? 'pm' : 'am';
+        const parsedTime = `${hr}:${date.getMinutes().toString().padStart(2, '0')}${ampm}`;
+
+        return {
+          uuid,
+          day: parsedDay,
+          patients: patientName,
+          time: parsedTime,
+          tag,
+        };
+      });
+
+      const { scheduledReminders } = state;
+
+      const newScheduled = [...scheduledReminders, ...displayReminders];
+
+      dispatch({ type: 'SCHEDULED', payload: newScheduled });
+      dispatch({ type: 'NOACCOUNT', payload: false });
+      dispatch({ type: 'PTUUID', payload: ptuuid });
+      dispatch({ type: 'USER', payload: username });
+      dispatch({ type: 'SERVERREMINDER', payload: reminders });
       dispatch({ type: 'FAILED', payload: false });
       dispatch({ type: 'LOGIN', payload: true });
     } else {
