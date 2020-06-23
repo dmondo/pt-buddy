@@ -8,7 +8,6 @@ import EmailIcon from '@material-ui/icons/Email';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import Button from '@material-ui/core/Button';
 import { store } from '../store/store';
-// import '../style/Login.css';
 
 const useStyles = makeStyles((theme) => ({
   margin: { margin: theme.spacing(1) },
