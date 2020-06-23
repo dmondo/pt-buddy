@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-const Patients = ({ patient }: { patient: IPatient }): JSX.Element => {
+const Patients = ({ patient }: { patient: IClientPatient }): JSX.Element => {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
   return (
