@@ -38,21 +38,51 @@ const Form = (): JSX.Element => {
     return valid;
   };
 
-  const newReminder = (): void => {
+  const newReminder = async (): Promise<void> => {
     if (!reminderErrorHandle() || !tagErrorHandle()) { return; }
-    const { reminders, tagToText } = state;
+    const {
+      reminders,
+      tagToText,
+      ptuuidUser,
+      serverTags,
+      noAccount,
+    } = state;
     const tag = (document.getElementById('tag') as HTMLInputElement).value;
     const text = (document.getElementById('reminder') as HTMLInputElement).value;
+    const tagUUID = uuidv4();
     const reminder = {
       tag,
       text,
-      uuid: uuidv4(),
+      uuid: tagUUID,
     };
     const newReminders = [...reminders, reminder];
     const newTagToText = { ...tagToText };
     newTagToText[tag] = text;
     dispatch({ type: 'REMINDERS', payload: newReminders });
     dispatch({ type: 'ADDTAGTEXT', payload: newTagToText });
+
+    const newServerTag = {
+      uuid: tagUUID,
+      ptuuid: ptuuidUser,
+      tag,
+      text,
+    };
+
+    const newServerTags = [...serverTags, newServerTag];
+
+    dispatch({ type: 'SERVERTAG', payload: newServerTags });
+
+    if (!noAccount) {
+      const url = '/tags';
+
+      const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tags: newServerTags }),
+      };
+
+      await fetch(url, options);
+    }
   };
 
   const phoneErrorHandle = (): boolean => {
@@ -77,22 +107,53 @@ const Form = (): JSX.Element => {
     return valid;
   };
 
-  const newPatient = (): void => {
+  const newPatient = async (): Promise<void> => {
     if (!nameErrorHandle() || !phoneErrorHandle()) { return; }
 
-    const { patients, patientToNumber } = state;
+    const {
+      patients,
+      patientToNumber,
+      noAccount,
+      ptuuidUser,
+      serverPatients,
+    } = state;
     const name = (document.getElementById('patientName') as HTMLInputElement).value;
     const phone = (document.getElementById('patientNumber') as HTMLInputElement).value;
+
+    const patientUUID = uuidv4();
 
     const patient = {
       name,
       phone,
-      uuid: uuidv4(),
+      uuid: patientUUID,
     };
     patientToNumber[name] = phone;
     const newPatients = [...patients, patient];
     dispatch({ type: 'PATIENTTONUMBER', payload: patientToNumber });
     dispatch({ type: 'PATIENTS', payload: newPatients });
+
+    const newServerPatient = {
+      uuid: patientUUID,
+      ptuuid: ptuuidUser,
+      patientName: name,
+      patientNumber: `+1${phone}`,
+    };
+
+    const newServerPatients = [...serverPatients, newServerPatient];
+
+    dispatch({ type: 'SERVERPATIENT', payload: newServerPatients });
+
+    if (!noAccount) {
+      const url = '/patients';
+
+      const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patients: newServerPatients }),
+      };
+
+      await fetch(url, options);
+    }
   };
 
   const {

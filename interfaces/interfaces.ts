@@ -1,5 +1,6 @@
 interface IState {
   user: string;
+  ptuuidUser: string;
   loginStatus: boolean;
   failedLogin: boolean;
   newUser: boolean;
@@ -25,6 +26,11 @@ interface IState {
   tagError: boolean;
   reminderError: boolean;
   minuteError: boolean;
+  noAccount: boolean;
+  failedReminderSend: boolean;
+  serverReminders: IServerReminder[];
+  serverTags: ITag[];
+  serverPatients: IPatient[];
 }
 
 interface ITagToText {
@@ -49,7 +55,7 @@ interface IReminder {
   uuid: string;
 }
 
-interface IPatient {
+interface IClientPatient {
   name: string;
   phone: number;
   uuid: string;
@@ -87,4 +93,45 @@ interface errorCB {
 
 interface IUUID {
   uuid: string;
+}
+
+interface IUser {
+  username: string;
+  email: string;
+  password: string;
+  ptuuid: string;
+}
+
+interface ISaveUser {
+  (err: Error, type?: string): void;
+}
+
+interface IVerify {
+  email: string;
+  password: string;
+}
+
+interface IDBUser {
+  username: string;
+  email: string;
+  ptuuid: string;
+  registerDate: Date;
+}
+
+interface IFindUser {
+  (err: Error, data?: IDBUser, type?: string): void;
+}
+
+interface ITag {
+  uuid: string;
+  ptuuid: string;
+  tag: string;
+  text: string;
+}
+
+interface IPatient {
+  uuid: string;
+  ptuuid: string;
+  patientName: string;
+  patientNumber: string;
 }

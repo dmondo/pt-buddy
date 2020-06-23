@@ -42,6 +42,8 @@ const CalendarWidget = (): JSX.Element => {
   const classes = useStyles();
   const { state, dispatch } = React.useContext(store);
   const {
+    user,
+    ptuuidUser,
     reminders,
     patients,
     pickingDate,
@@ -54,6 +56,8 @@ const CalendarWidget = (): JSX.Element => {
     addTime,
     addMinute,
     addAM,
+    noAccount,
+    serverReminders,
   } = state;
 
   const updateMinute = (): void => {
@@ -87,6 +91,12 @@ const CalendarWidget = (): JSX.Element => {
       return;
     }
 
+    if (noAccount) {
+      dispatch({ type: 'FAILSEND', payload: true });
+    } else {
+      dispatch({ type: 'FAILSEND', payload: false });
+    }
+
     const { scheduledReminders, tagToText, patientToNumber } = state;
 
     const defaultAM = (addAM === '') ? 'am' : addAM;
@@ -111,7 +121,7 @@ const CalendarWidget = (): JSX.Element => {
 
         const serverReminder = {
           uuid: newUUID,
-          ptuuid: 'placeholder',
+          ptuuid: ptuuidUser,
           jobid: uuidv4(),
           tag: addReminder,
           text: tagToText[addReminder],
@@ -122,6 +132,10 @@ const CalendarWidget = (): JSX.Element => {
           completed: false,
         };
 
+        const newServerReminders = [...serverReminders, serverReminder];
+
+        dispatch({ type: 'SERVERREMINDER', payload: newServerReminders });
+
         const url = '/reminders';
 
         const options = {
@@ -129,8 +143,9 @@ const CalendarWidget = (): JSX.Element => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(serverReminder),
         };
-
-        await fetch(url, options);
+        if (!noAccount) {
+          await fetch(url, options);
+        }
       });
     } else {
       selectedDates.forEach(async (day: Date) => {
@@ -143,7 +158,7 @@ const CalendarWidget = (): JSX.Element => {
 
           const serverReminder = {
             uuid: newUUID,
-            ptuuid: 'placeholder',
+            ptuuid: ptuuidUser,
             jobid: uuidv4(),
             tag: addReminder,
             text: tagToText[addReminder],
@@ -154,6 +169,10 @@ const CalendarWidget = (): JSX.Element => {
             completed: false,
           };
 
+          const newServerReminders = [...serverReminders, serverReminder];
+
+          dispatch({ type: 'SERVERREMINDER', payload: newServerReminders });
+
           const url = '/reminders';
 
           const options = {
@@ -161,8 +180,9 @@ const CalendarWidget = (): JSX.Element => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(serverReminder),
           };
-
-          await fetch(url, options);
+          if (!noAccount) {
+            await fetch(url, options);
+          }
         });
       });
     }
@@ -242,7 +262,7 @@ const CalendarWidget = (): JSX.Element => {
               onChange={updatePatients}
             >
               {
-                patients.map((patient: IPatient) => (
+                patients.map((patient: IClientPatient) => (
                   <MenuItem
                     value={patient.name}
                     key={patient.uuid}

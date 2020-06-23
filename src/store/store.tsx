@@ -2,6 +2,7 @@ import React from 'react';
 
 const initialState = {
   user: '',
+  ptuuidUser: '',
   loginStatus: false,
   failedLogin: false,
   newUser: false,
@@ -27,6 +28,11 @@ const initialState = {
   reminderError: false,
   minuteError: false,
   patientToNumber: {},
+  noAccount: true,
+  failedReminderSend: false,
+  serverReminders: [],
+  serverTags: [],
+  serverPatients: [],
 };
 
 export const store = React.createContext<IState | any>(initialState);
@@ -35,6 +41,8 @@ const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
     case 'USER':
       return { ...state, user: action.payload };
+    case 'PTUUID':
+      return { ...state, ptuuidUser: action.payload };
     case 'LOGIN':
       return { ...state, loginStatus: action.payload };
     case 'FAILED':
@@ -85,6 +93,16 @@ const reducer = (state: IState, action: IAction): IState => {
       return { ...state, minuteError: action.payload };
     case 'PATIENTTONUMBER':
       return { ...state, patientToNumber: action.payload };
+    case 'NOACCOUNT':
+      return { ...state, noAccount: action.payload };
+    case 'FAILSEND':
+      return { ...state, failedReminderSend: action.payload };
+    case 'SERVERREMINDER':
+      return { ...state, serverReminders: action.payload };
+    case 'SERVERTAG':
+      return { ...state, serverTags: action.payload };
+    case 'SERVERPATIENT':
+      return { ...state, serverPatients: action.payload };
     default:
       return state;
   }

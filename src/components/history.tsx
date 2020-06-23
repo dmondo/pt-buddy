@@ -58,7 +58,7 @@ const History = (): JSX.Element => {
                 your patients
               </Typography>
               {
-                patients.map((patient: IPatient) => (
+                patients.map((patient: IClientPatient) => (
                   <Patients
                     patient={patient}
                     key={patient.uuid}

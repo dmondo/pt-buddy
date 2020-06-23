@@ -35,7 +35,7 @@ const validAMPM = (val: string): boolean => (
 const reminderSchema = new mongoose.Schema({
   uuid: String,
   ptuuid: String,
-  jobid: String,
+  jobid: { type: String, unique: true },
   tag: String,
   text: String,
   date: Date,
