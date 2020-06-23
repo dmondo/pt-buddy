@@ -51,7 +51,13 @@ const ExistingUser = (): JSX.Element => {
     if (result.status === 200) {
       const verifyUser = await result.json();
 
-      const { ptuuid, username, reminders } = verifyUser;
+      const {
+        ptuuid,
+        username,
+        reminders,
+        tags,
+        patients,
+      } = verifyUser;
 
       const displayReminders = reminders.map((reminder: IServerReminder) => {
         const {
@@ -76,6 +82,16 @@ const ExistingUser = (): JSX.Element => {
         };
       });
 
+      const displayTags = tags.map((dat: ITag) => {
+        const { uuid, tag, text } = dat;
+        return { uuid, tag, text };
+      });
+
+      const displayPatients = patients.map((dat: IPatient) => {
+        const { uuid, patientName, patientNumber } = dat;
+        return { uuid, name: patientName, phone: patientNumber };
+      });
+
       const { scheduledReminders } = state;
 
       const newScheduled = [...scheduledReminders, ...displayReminders];
@@ -84,7 +100,9 @@ const ExistingUser = (): JSX.Element => {
       dispatch({ type: 'NOACCOUNT', payload: false });
       dispatch({ type: 'PTUUID', payload: ptuuid });
       dispatch({ type: 'USER', payload: username });
-      dispatch({ type: 'SERVERREMINDER', payload: reminders });
+      dispatch({ type: 'PATIENTS', payload: displayPatients });
+      dispatch({ type: 'REMINDERS', payload: displayTags });
+      // dispatch({ type: 'SERVERREMINDER', payload: reminders });
       dispatch({ type: 'FAILED', payload: false });
       dispatch({ type: 'LOGIN', payload: true });
     } else {
