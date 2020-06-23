@@ -31,6 +31,8 @@ const initialState = {
   noAccount: true,
   failedReminderSend: false,
   serverReminders: [],
+  serverTags: [],
+  serverPatients: [],
 };
 
 export const store = React.createContext<IState | any>(initialState);
@@ -97,6 +99,10 @@ const reducer = (state: IState, action: IAction): IState => {
       return { ...state, failedReminderSend: action.payload };
     case 'SERVERREMINDER':
       return { ...state, serverReminders: action.payload };
+    case 'SERVERTAG':
+      return { ...state, serverTags: action.payload };
+    case 'SERVERPATIENT':
+      return { ...state, serverPatients: action.payload };
     default:
       return state;
   }
