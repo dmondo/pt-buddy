@@ -29,6 +29,8 @@ interface IState {
   noAccount: boolean;
   failedReminderSend: boolean;
   serverReminders: IServerReminder[];
+  serverTags: ITag[];
+  serverPatients: IPatient[];
 }
 
 interface ITagToText {
@@ -118,4 +120,18 @@ interface IDBUser {
 
 interface IFindUser {
   (err: Error, data?: IDBUser, type?: string): void;
+}
+
+interface ITag {
+  uuid: string;
+  ptuuid: string;
+  tag: string;
+  text: string;
+}
+
+interface IPatient {
+  uuid: string;
+  ptuuid: string;
+  patientName: string;
+  patientNumber: string;
 }
