@@ -262,7 +262,7 @@ const CalendarWidget = (): JSX.Element => {
               onChange={updatePatients}
             >
               {
-                patients.map((patient: IPatient) => (
+                patients.map((patient: IClientPatient) => (
                   <MenuItem
                     value={patient.name}
                     key={patient.uuid}
