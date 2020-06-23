@@ -1,5 +1,11 @@
 import { Request, Response } from 'express';
-import { findUser, saveUser, findReminderByUser } from '../../database/index';
+import {
+  findUser,
+  saveUser,
+  findReminderByUser,
+  findTags,
+  findPatients,
+} from '../../database/index';
 
 const postUser = (req: Request, res: Response): void => {
   const { username, email, password } = req.body;
@@ -34,11 +40,23 @@ const getUser = async (req: Request, res: Response): Promise<void> => {
     } else {
       const { ptuuid } = data;
       const reminders = await findReminderByUser(ptuuid);
+      const tags = await findTags(ptuuid);
+      const patients = await findPatients(ptuuid);
 
       if (reminders) {
-        res.json({ ...data, reminders });
+        res.json({
+          ...data,
+          reminders,
+          tags,
+          patients,
+        });
       } else {
-        res.json({ ...data, reminders: [] });
+        res.json({
+          ...data,
+          reminders: [],
+          tags: [],
+          patients: [],
+        });
       }
     }
   });
