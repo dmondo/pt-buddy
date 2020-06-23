@@ -17,7 +17,12 @@ const useStyles = makeStyles((theme) => ({
 const NewUser = (): JSX.Element => {
   const classes = useStyles();
   const { state, dispatch } = React.useContext(store);
-  const { failedLogin, serverReminders } = state;
+  const {
+    failedLogin,
+    serverReminders,
+    serverTags,
+    serverPatients,
+  } = state;
 
   const createAccount = async (): Promise<void> => {
     const newPTUUID = uuidv4();
@@ -52,6 +57,41 @@ const NewUser = (): JSX.Element => {
 
           await fetch(reminderUrl, reminderOptions);
         });
+      }
+
+      if (serverTags.length) {
+        const tagUrl = '/tags';
+
+        const newServerTags = serverTags.map((tag: ITag) => {
+          const updateTag = { ...tag };
+          updateTag.ptuuid = newPTUUID;
+          return updateTag;
+        });
+
+        const tagOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tags: newServerTags }),
+        };
+
+        await fetch(tagUrl, tagOptions);
+      }
+
+      if (serverPatients.length) {
+        const patientUrl = '/patients';
+        const newServerPatients = serverPatients.forEach((patient: IPatient) => {
+          const updatePatient = { ...patient };
+          updatePatient.ptuuid = newPTUUID;
+          return updatePatient;
+        });
+
+        const patientOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ patients: newServerPatients }),
+        };
+
+        await fetch(patientUrl, patientOptions);
       }
 
       dispatch({ type: 'NOACCOUNT', payload: false });
