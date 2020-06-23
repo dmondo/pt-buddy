@@ -6,7 +6,6 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import Button from '@material-ui/core/Button';
 import { store } from '../store/store';
-// import '../style/Login.css';
 
 const months = {
   0: 'January',
@@ -39,7 +38,7 @@ const ExistingUser = (): JSX.Element => {
       password: (document.getElementById('password') as HTMLInputElement).value,
     };
 
-    const url = '/users';
+    const url = '/auth';
 
     const options = {
       method: 'POST',
@@ -62,10 +61,11 @@ const ExistingUser = (): JSX.Element => {
           date,
           patientName,
         } = reminder;
-        const parsedDay = daily ? 'daily' : months[date.getMonth()];
-        const hr = (date.getHours() > 12) ? date.getHours() % 12 : date.getHours();
-        const ampm = (date.getHours() >= 12) ? 'pm' : 'am';
-        const parsedTime = `${hr}:${date.getMinutes().toString().padStart(2, '0')}${ampm}`;
+        const cDate = new Date(date);
+        const parsedDay = daily ? 'daily' : months[cDate.getMonth()];
+        const hr = (cDate.getHours() > 12) ? cDate.getHours() % 12 : cDate.getHours();
+        const ampm = (cDate.getHours() >= 12) ? 'pm' : 'am';
+        const parsedTime = `${hr}:${cDate.getMinutes().toString().padStart(2, '0')}${ampm}`;
 
         return {
           uuid,
