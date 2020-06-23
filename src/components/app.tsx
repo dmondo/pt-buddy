@@ -31,6 +31,15 @@ const App = (): JSX.Element => {
         <Typography variant="h1" component="h2" gutterBottom>
           pt buddy
         </Typography>
+        {
+          (user === '')
+            ? ''
+            : (
+              <Typography variant="h5">
+                {`Welcome ${user}`}
+              </Typography>
+            )
+        }
         <Form />
         <div className={classes.calendar}>
           <Scheduler />
@@ -41,7 +50,7 @@ const App = (): JSX.Element => {
           {
             (user === '')
               ? <Login />
-              : `Welcome, ${user}`
+              : ''
           }
         </Grid>
         <Grid>
