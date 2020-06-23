@@ -54,7 +54,7 @@ const ReminderConstructor = (): JSX.Element => {
           <Typography variant="h6" component="h2">
             {`new reminder: ${addReminder} - ${selectedPatient} `}
             {!pickingDate ? 'daily ' : parsedDates.join(', ')}
-            {` ${addTime}:${addMinute.padStart(2, '0')}${addAM}`}
+            {` ${addTime}${(addTime === '') ? '' : ':'}${(addTime === '') ? '' : addMinute.padStart(2, '0')}${addAM}`}
           </Typography>
           <CardActions>
             <Button
