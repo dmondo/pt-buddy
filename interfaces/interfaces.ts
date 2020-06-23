@@ -55,7 +55,7 @@ interface IReminder {
   uuid: string;
 }
 
-interface IPatient {
+interface IClientPatient {
   name: string;
   phone: number;
   uuid: string;
