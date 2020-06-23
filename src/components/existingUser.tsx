@@ -102,7 +102,6 @@ const ExistingUser = (): JSX.Element => {
       dispatch({ type: 'USER', payload: username });
       dispatch({ type: 'PATIENTS', payload: displayPatients });
       dispatch({ type: 'REMINDERS', payload: displayTags });
-      // dispatch({ type: 'SERVERREMINDER', payload: reminders });
       dispatch({ type: 'FAILED', payload: false });
       dispatch({ type: 'LOGIN', payload: true });
     } else {
