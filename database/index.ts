@@ -1,8 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import Reminder from './models/reminders';
 import User from './models/users';
+import Patient from './models/patients';
+import Tag from './models/tags';
 
 dotenv.config();
 
@@ -77,16 +79,6 @@ const findRemindersSchedule = async (): Promise<IServerReminder[]> => {
   }
 };
 
-// const findReminderByUser =
-// async (ptuuid: string, callback: IReminderCallback): Promise<void> => {
-//   try {
-//     const reminder = await Reminder.find({ ptuuid });
-//     callback(null, reminder.map((doc: mongoose.Document) => doc.toObject()));
-//   } catch (err) {
-//     callback(err);
-//   }
-// };
-
 const findReminderByUser = async (ptuuid: string): Promise<IServerReminder[] | Error> => {
   try {
     const reminder = await Reminder.find({ ptuuid });
@@ -148,6 +140,7 @@ const saveUser = async (data: IUser, callback: ISaveUser): Promise<void> => {
 const findUser = async (data: IVerify, callback: IFindUser): Promise<void> => {
   try {
     const { email, password } = data;
+
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -158,6 +151,7 @@ const findUser = async (data: IVerify, callback: IFindUser): Promise<void> => {
     const userObj = user.toObject();
 
     const compare = await bcrypt.compare(password, userObj.password);
+
     if (!compare) {
       callback(null, null, 'badUser');
     } else {
@@ -174,6 +168,78 @@ const findUser = async (data: IVerify, callback: IFindUser): Promise<void> => {
   }
 };
 
+const saveTags = async (data: ITag[]): Promise<null | Error> => {
+  try {
+    const dbData = data.map((dat: ITag) => {
+      const {
+        uuid,
+        ptuuid,
+        tag,
+        text,
+      } = dat;
+      const tagDoc = new Tag({
+        uuid,
+        ptuuid,
+        tag,
+        text,
+      });
+      return tagDoc;
+    });
+
+    dbData.forEach(async (record) => {
+      await record.save();
+    });
+    return null;
+  } catch (err) {
+    return err;
+  }
+};
+
+const findTags = async (ptuuid: string): Promise<ITag[]> => {
+  try {
+    const tags = await Tag.find({ ptuuid });
+    return tags.map((doc: mongoose.Document) => doc.toObject());
+  } catch (err) {
+    return err;
+  }
+};
+
+const savePatients = async (data: IPatient[]): Promise<null | Error> => {
+  try {
+    const dbData = data.map((dat: IPatient) => {
+      const {
+        uuid,
+        ptuuid,
+        patientName,
+        patientNumber,
+      } = dat;
+      const patientDoc = new Patient({
+        uuid,
+        ptuuid,
+        patientName,
+        patientNumber,
+      });
+      return patientDoc;
+    });
+
+    dbData.forEach(async (record) => {
+      await record.save();
+    });
+    return null;
+  } catch (err) {
+    return err;
+  }
+};
+
+const findPatients = async (ptuuid: string): Promise<IPatient[]> => {
+  try {
+    const patients = await Patient.find({ ptuuid });
+    return patients.map((doc: mongoose.Document) => doc.toObject());
+  } catch (err) {
+    return err;
+  }
+};
+
 export {
   saveReminder,
   findReminder,
@@ -184,4 +250,8 @@ export {
   completeReminder,
   saveUser,
   findUser,
+  findTags,
+  saveTags,
+  savePatients,
+  findPatients,
 };
